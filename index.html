@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giáo Trình Tương Tác: Terminal Cơ Bản</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">$_</span>
+                <span class="logo-text">TerminalClass</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#overview">Tổng quan</a></li>
+                <li><a href="#intro">Mở đầu</a></li>
+                <li><a href="#part1">Phần 1: CLI vs GUI</a></li>
+                <li><a href="#part2">Phần 2: Lệnh Điều hướng</a></li>
+                <li><a href="#part3">Phần 3: Thao tác File</a></li>
+                <li><a href="#part4">Phần 4: 4 Lỗi Kinh Điển</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content (Scrolling Textbook) -->
+        <main class="main-content">
+            
+            <header class="page-header">
+                <div class="glow-bg"></div>
+                <h1>KỊCH BẢN GIẢNG DẠY — SESSION 04: TERMINAL CƠ BẢN</h1>
+                <p class="subtitle">Giao tiếp với máy tính bằng ngôn ngữ của Hacker</p>
+            </header>
+
+            <!-- Overview Section -->
+            <section id="overview" class="content-section">
+                <h2>MỤC TIÊU BÀI HỌC</h2>
+                <div class="goals-list">
+                    <div class="goal-item">1. Giải thích được vì sao developer bắt buộc phải dùng Terminal thay vì chỉ dùng chuột.</div>
+                    <div class="goal-item">2. Sử dụng thành thạo 3 lệnh điều hướng: <code>pwd</code>, <code>cd</code>, <code>ls/dir</code>.</div>
+                    <div class="goal-item">3. Thực hiện được 5 lệnh thao tác cốt lõi: <code>mkdir</code>, <code>touch</code>, <code>cp</code>, <code>mv</code>, <code>rm</code>.</div>
+                    <div class="goal-item">4. Đọc hiểu và tự xử lý được 4 lỗi Terminal kinh điển theo quy trình 3 bước.</div>
+                </div>
+            </section>
+
+            <!-- Intro Section -->
+            <section id="intro" class="content-section">
+                <h2>MỞ ĐẦU – TÌNH HUỐNG DẪN NHẬP</h2>
+                <div class="text-block">
+                    <p><strong>Tình huống:</strong> Một bạn sinh viên năm nhất đi thực tập, được giao nhiệm vụ đầu tiên: <em>'Lên server công ty, xoá giúp anh 2.000 file log cũ hơn 30 ngày.'</em> Bạn ấy mở máy lên tìm... và không thấy màn hình desktop nào cả, không có chuột, không có biểu tượng thư mục để bấm. Chỉ có một cửa sổ đen ngòm với dòng chữ nhấp nháy. Bạn ấy phải làm sao?</p>
+                </div>
+                <div class="highlight-block">
+                    <h3>💡 Analogy "Gọi điện chỉ đường cho người khiếm thị"</h3>
+                    <p>Các bạn tưởng tượng: bạn đang ở Hà Nội, muốn nhờ một người bạn ở TP.HCM lấy giúp một cuốn sách trong phòng bạn — nhưng bạn không thể gửi ảnh, không thể dùng Google Maps chỉ bằng tay. Bạn chỉ có thể <strong>gọi điện thoại và nói bằng lời</strong>: 'Cậu đi vào cửa chính, rẽ trái, mở tủ thứ hai, ngăn thứ ba...' Đó chính xác là cách Terminal hoạt động — bạn 'nói chuyện' với máy tính bằng chữ, không phải bằng cách nhìn và click.</p>
+                </div>
+
+                <div class="highlight-block" style="background: rgba(16, 185, 129, 0.1); border-left-color: var(--accent-primary);">
+                    <h3>🌍 Sự khác biệt giữa các Hệ điều hành</h3>
+                    <p>Tương tự như ngôn ngữ ngoài đời, mỗi Hệ điều hành có một "phương ngữ" Terminal riêng:</p>
+                    <ul>
+                        <li><strong>MacOS / Linux (Bash/Zsh):</strong> Dùng chuẩn lệnh <span class="tooltip-text" data-tooltip="Portable Operating System Interface: Tiêu chuẩn hệ điều hành chung giúp các lệnh (ls, pwd...) hoạt động giống hệt nhau trên các hệ thống Unix-like (MacOS, Ubuntu, CentOS...).">POSIX</span> (như <code>ls</code>, <code>pwd</code>, <code>rm</code>).</li>
+                        <li><strong>Windows (PowerShell):</strong> Dùng lệnh theo cấu trúc <span class="tooltip-text" data-tooltip="Động từ-Danh từ: Cách đặt tên lệnh của PowerShell luôn tuân theo nguyên tắc 'Làm hành động gì - Lên đối tượng nào' (VD: Get-Location = Lấy-Vị_trí, New-Item = Tạo-Mục_mới).">Verb-Noun</span> (như <code>Get-ChildItem</code>, <code>Remove-Item</code>). Mặc dù PowerShell có sẵn các alias (bí danh) giống hệt Mac/Linux, nhưng ở một số lệnh (như tạo file), bạn bắt buộc phải dùng lệnh riêng của Windows.</li>
+                    </ul>
+                    <p><em>(Bạn có thể bấm nút đổi OS trên góc phải của các màn hình Terminal Demo bên dưới để xem sự khác biệt)</em></p>
+                </div>
+            </section>
+
+            <!-- Part 1 Section -->
+            <section id="part1" class="content-section">
+                <h2>PHẦN 1: CLI vs GUI & CẤU TRÚC CÂU LỆNH</h2>
+                
+                <div class="highlight-block" style="background: rgba(14, 165, 233, 0.05); border-left-color: var(--accent-primary);">
+                    <h3>Giao diện Đồ hoạ (GUI) vs Giao diện Dòng lệnh (CLI)</h3>
+                    <p><strong>GUI (Graphical User Interface):</strong> Giống như Nồi cơm điện thông minh có màn hình cảm ứng. Rất trực quan, dễ sử dụng (chỉ việc click/chạm), nhưng bạn <em>chỉ làm được đúng những tính năng mà nhà sản xuất đã tạo ra sẵn nút bấm</em>.</p>
+                    <p><strong>CLI (Command Line Interface - Terminal):</strong> Giống như bạn tự tay nấu ăn theo công thức viết tay. Ban đầu phải học thuộc nguyên liệu (lệnh) và cách làm, nhưng bù lại bạn có quyền lực tuyệt đối để <em>nấu BẤT KỲ món gì trên đời</em>, kết hợp mọi hành động theo ý muốn mà không bị giới hạn.</p>
+                </div>
+
+                <!-- Interactive Block: CLI vs GUI -->
+                <div class="interactive-block">
+                    <div class="block-header" style="flex-wrap: wrap; gap: 10px;">
+                        <h3>▶ DEMO: Lò Vi Sóng (GUI vs CLI)</h3>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn-play" id="btn-demo1-gui" style="background:#0ea5e9">1. Thử GUI (Mặc định)</button>
+                            <button class="btn-play" id="btn-demo1-cli1">2. CLI: Pizza</button>
+                            <button class="btn-play" id="btn-demo1-cli2">3. CLI: Súp</button>
+                            <button class="btn-play" id="btn-demo1-cli3">4. CLI: Gà</button>
+                            <button class="btn-play" id="btn-demo1-reset" style="background:#64748b">↺ Đặt lại</button>
+                        </div>
+                    </div>
+                    <div class="split-layout">
+                        <div class="panel gui-panel">
+                            <div class="panel-header"><span class="badge gui-badge">GUI</span></div>
+                            <div class="panel-body flex-center">
+                                <div class="microwave-scene" id="demo1-microwave">
+                                    <div class="food-shelf">
+                                        <div class="food-item" id="food-bread">🥪</div>
+                                        <div class="food-item" id="food-pizza">🍕</div>
+                                        <div class="food-item" id="food-soup">🍲</div>
+                                        <div class="food-item" id="food-chicken">🍗</div>
+                                    </div>
+                                    <div class="microwave">
+                                        <div class="microwave-door">
+                                            <div class="microwave-food"></div>
+                                        </div>
+                                        <div class="microwave-control">
+                                            <div class="mw-screen">00:00</div>
+                                            <div class="mw-btn-grid">
+                                                <div class="mw-btn"></div>
+                                                <div class="mw-btn"></div>
+                                                <div class="mw-btn"></div>
+                                                <div class="mw-btn"></div>
+                                            </div>
+                                            <div class="mw-start-btn">Start</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="panel cli-panel">
+                            <div class="panel-header"><span class="badge cli-badge">CLI</span></div>
+                            <div class="panel-body">
+                                <div class="mock-terminal">
+                                    <div class="term-header"><div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div></div>
+                                    <div class="term-body" id="term-demo-1">
+                                        <div class="term-line"><span class="prompt">$</span> <span class="typing"></span><span class="cursor">_</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-block mt-4">
+                    <h3>3 Lý do Lập trình viên PHẢI dùng Terminal</h3>
+                    <div class="table-container">
+                        <table class="info-table">
+                            <thead>
+                                <tr><th>Lý do</th><th>Giải thích</th><th>Ví dụ đời thực</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>1. Server không có màn hình</strong></td>
+                                    <td>Cloud server thường chỉ kết nối qua SSH (cửa sổ đen).</td>
+                                    <td>Giống tổng đài trong phòng máy lạnh dưới hầm — không gắn màn hình, kỹ thuật viên "gọi vào" từ xa.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>2. Tốc độ thần tốc</strong></td>
+                                    <td>Tìm/Quét file nặng cực nhanh, GUI dễ treo máy.</td>
+                                    <td>Tìm 1 từ trong từ điển 2000 trang: lật từng trang (GUI) vs nhảy thẳng đến mục lục (CLI).</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>3. Tự động hoá (Automation)</strong></td>
+                                    <td>1 lệnh thay thế 1.000 lần click chuột.</td>
+                                    <td>Viết 1 mẫu tin nhắn gửi cho 1.000 khách hàng thay vì copy-paste từng tin một.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="text-block mt-4">
+                    <h3>Cấu trúc câu lệnh Terminal</h3>
+                    <p>Công thức: <code>Command + [Options] + [Arguments]</code></p>
+                    <p>Ví dụ tiếng Việt: <strong>"Quét <em>(Command)</em> thật kỹ <em>(Option)</em> cái sân sau <em>(Argument)</em>"</strong></p>
+                    <ul style="margin-top: 0.5rem;">
+                        <li><strong>Command:</strong> Hành động (Ví dụ: <code>ls</code>)</li>
+                        <li><strong>Option (Cờ):</strong> Cách thức (Ví dụ: <code>-la</code>)</li>
+                        <li><strong>Argument (Tham số):</strong> Đối tượng (Ví dụ: <code>/var/log</code>)</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-block" style="background: rgba(245, 158, 11, 0.1); border-left-color: #f59e0b;">
+                    <h3>⭐ 3 Quy Tắc Vàng Khi Gõ Lệnh</h3>
+                    <ul>
+                        <li><strong>1. Phân biệt hoa/thường (Case Sensitivity):</strong> <code>Desktop</code> khác <code>desktop</code>. Giống như mật khẩu Wi-Fi, sai 1 chữ hoa là hệ thống không hiểu.</li>
+                        <li><strong>2. Phím TAB thần thánh:</strong> Gõ 2-3 chữ cái đầu rồi bấm phím Tab để máy tính tự điền nốt, giúp tránh gõ sai chính tả tuyệt đối.</li>
+                        <li><strong>3. Luôn dùng khoảng trắng:</strong> Dùng dấu cách để phân tách Command, Option và Argument.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Part 2 Section -->
+            <section id="part2" class="content-section">
+                <h2>PHẦN 2: BỘ BA LỆNH ĐIỀU HƯỚNG</h2>
+                
+                <div class="text-block">
+                    <p>Tưởng tượng bạn bước vào một siêu thị lớn, không có bản đồ trong tay. Ba câu hỏi đầu tiên bạn cần trả lời là:</p>
+                    <ul>
+                        <li><strong>(1) Mình đang đứng ở đâu?</strong> Mac/Linux: <code>pwd</code> | Windows: <code>Get-Location</code></li>
+                        <li><strong>(2) Xung quanh có kệ hàng nào?</strong> Mac/Linux: <code>ls</code> | Windows: <code>dir</code> (hoặc <code>Get-ChildItem</code>)</li>
+                        <li><strong>(3) Muốn đi sang khu nào tiếp theo?</strong> Cả hai đều dùng: <code>cd</code></li>
+                    </ul>
+                </div>
+
+                <!-- Interactive Block: Supermarket -->
+                <div class="interactive-block">
+                    <div class="block-header" style="flex-wrap: wrap; gap: 10px;">
+                        <h3>▶ DEMO: Tìm đồ trong Siêu thị ảo</h3>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn-play" id="btn-demo2-pwd" style="background:#0ea5e9">1. pwd (Vị trí)</button>
+                            <button class="btn-play" id="btn-demo2-ls" style="background:#10b981">2. ls (Nhìn quanh)</button>
+                            <button class="btn-play" id="btn-demo2-cd" style="background:#f59e0b">3. cd (Di chuyển)</button>
+                            <button class="btn-play" id="btn-demo2-reset" style="background:#64748b">↺ Đặt lại</button>
+                        </div>
+                    </div>
+                    <div class="split-layout">
+                        <div class="panel real-panel">
+                            <div class="panel-header"><span class="badge gui-badge">Thế giới thực</span></div>
+                            <div class="panel-body flex-center" style="padding:0">
+                                <div class="supermarket-scene">
+                                    <div class="map-tooltip hidden" id="map-tooltip">📍 Đang ở Cổng chính</div>
+                                    <div class="aisles-container">
+                                        <div class="aisle"><div class="shelf-name">Khu Bánh Kẹo</div><div class="items">🍬🍫🍩</div></div>
+                                        <div class="aisle"><div class="shelf-name">Khu Sữa</div><div class="items">🥛🍼🧀</div></div>
+                                    </div>
+                                    <div class="player" id="player">🚶</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="panel code-panel">
+                            <div class="panel-header"><span class="badge cli-badge">Terminal Code</span></div>
+                            <div class="panel-body">
+                                <div class="mock-terminal large">
+                                    <div class="term-header">
+                                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                                        <div class="os-toggle">
+                                            <button class="os-btn active" data-os="mac">🍎 Mac/Linux</button>
+                                            <button class="os-btn" data-os="win">🪟 Windows</button>
+                                        </div>
+                                    </div>
+                                    <div class="term-body" id="term-demo-2">
+                                        <div class="term-line"><span class="prompt">$</span> <span class="typing"></span><span class="cursor">_</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-block mt-4">
+                    <h3>Absolute Path (Đường dẫn tuyệt đối) vs Relative Path (Tương đối)</h3>
+                    <p><strong>Absolute Path:</strong> Giống như địa chỉ đầy đủ trên bưu kiện: <em>'Số 12, đường ABC, TP.HCM'</em>. Dù bạn đang đứng ở đâu trên thế giới, địa chỉ này vẫn đúng. (Thường bắt đầu bằng <code>/</code> hoặc <code>C:\</code>).</p>
+                    <p><strong>Relative Path:</strong> Giống như bạn chỉ đường cho hàng xóm: <em>'Đi thẳng 2 căn rồi rẽ phải'</em>. Chỉ đúng nếu người nghe đang đứng tại đúng vị trí xuất phát. (Thường dùng <code>.</code> thư mục hiện tại, hoặc <code>..</code> thư mục cha).</p>
+                </div>
+                
+                <div class="highlight-block" style="background: rgba(245, 158, 11, 0.1); border-left-color: #f59e0b;">
+                    <h3>⚠️ Lỗi thường gặp khi điều hướng</h3>
+                    <ul>
+                        <li><strong>"No such file or directory":</strong> Gõ sai tên file hoặc đang đứng sai chỗ. <em>Cách xử lý:</em> Gõ <code>pwd</code> rồi <code>ls</code> để xem xung quanh.</li>
+                        <li><strong>Tên thư mục có dấu cách:</strong> Phải bọc trong ngoặc kép (VD: <code>cd "Bai Tap"</code>). Giống như viết địa chỉ có dấu phẩy trong form, phải để trong ngoặc kép để hệ thống hiểu đó là MỘT cụm.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Part 3 Section -->
+            <section id="part3" class="content-section">
+                <h2>PHẦN 3: THAO TÁC FILE & THƯ MỤC</h2>
+                
+                <div class="text-block">
+                    <p>Nếu điều hướng giống như việc bạn di chuyển trong văn phòng, thì phần này là lúc bạn thực sự <strong>hành động</strong>: tạo hồ sơ, chuyển hồ sơ và vứt tài liệu vào máy huỷ giấy.</p>
+                    <ul>
+                        <li><strong>Tạo thư mục rỗng:</strong> <code>mkdir folder</code>. Thêm cờ <code>-p</code> (VD: <code>mkdir -p a/b/c</code>) để tự tạo cả chuỗi thư mục cha nếu chưa tồn tại.</li>
+                        <li><strong>Tạo file rỗng:</strong> Mac/Linux: <code>touch file.txt</code> | Windows: <code>New-Item file.txt</code></li>
+                        <li><strong>Sao chép (Copy):</strong> Mac/Linux: <code>cp</code> | Windows: <code>Copy-Item</code>. <em>Cờ đệ quy <code>-r</code> bắt buộc phải có khi copy thư mục để chép tất cả file bên trong.</em></li>
+                        <li><strong>Di chuyển / Đổi tên:</strong> Mac/Linux: <code>mv</code> | Windows: <code>Move-Item</code>. <em>Mẹo: <code>mv</code> vừa dùng để chuyển chỗ, vừa dùng để đổi tên ngay tại chỗ. Giống như bạn bóc nhãn cũ dán nhãn mới lên hộp.</em></li>
+                        <li><strong>Xoá:</strong> Mac/Linux: <code>rm -r</code> | Windows: <code>Remove-Item -Recurse</code></li>
+                    </ul>
+                </div>
+
+                <div class="highlight-block" style="background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444;">
+                    <h3>🚨 LỜI CẢNH BÁO HUYẾT MẠCH VỀ LỆNH RM</h3>
+                    <p>Khi bạn xoá file bằng chuột trên máy tính, file sẽ vào Thùng rác (Recycle Bin) và có thể cứu lại. Nhưng khi xoá bằng lệnh <code>rm</code> trong Terminal: <strong>FILE SẼ BỊ XOÁ VĨNH VIỄN, KHÔNG THỂ UNDO.</strong></p>
+                    <p>Đã có không ít lập trình viên vô tình gõ nhầm <code>rm -rf</code> và xoá sạch cả dự án làm trong nhiều tháng.</p>
+                    <p><strong>Câu thần chú trước khi gõ rm:</strong> Luôn tự hỏi <em>"Tôi đang đứng ở đúng chỗ chưa?"</em> và gõ thử <code>pwd</code> trước khi nhấn Enter lệnh xoá.</p>
+                </div>
+
+                <!-- Interactive Block: Office -->
+                <div class="interactive-block">
+                    <div class="block-header" style="flex-wrap: wrap; gap: 10px;">
+                        <h3>▶ DEMO: Dọn dẹp Bàn làm việc & Máy huỷ giấy</h3>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn-play" id="btn-demo3-touch">touch</button>
+                            <button class="btn-play" id="btn-demo3-cp">cp</button>
+                            <button class="btn-play" id="btn-demo3-mkdir">mkdir</button>
+                            <button class="btn-play" id="btn-demo3-mv">mv</button>
+                            <button class="btn-play" id="btn-demo3-rm" style="background:#ef4444">rm</button>
+                            <button class="btn-play" id="btn-demo3-reset" style="background:#64748b">↺</button>
+                        </div>
+                    </div>
+                    <div class="split-layout">
+                        <div class="panel real-panel">
+                            <div class="panel-header"><span class="badge gui-badge">Thế giới thực</span></div>
+                            <div class="panel-body flex-center" style="padding:0">
+                                <div class="office-scene">
+                                    <div class="desk">
+                                        <div class="desk-label">Bàn làm việc</div>
+                                        <div class="desk-items" id="desk-items"></div>
+                                    </div>
+                                    <div class="cabinet" id="cabinet"><div class="cabinet-label">Tủ Hồ Sơ</div></div>
+                                    <div class="shredder" id="shredder">
+                                        <div class="shredder-slot"></div>
+                                        <div class="shredder-body">🗑️ Máy huỷ</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="panel code-panel">
+                            <div class="panel-header"><span class="badge cli-badge">Terminal Code</span></div>
+                            <div class="panel-body">
+                                <div class="mock-terminal large">
+                                    <div class="term-header">
+                                        <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                                        <div class="os-toggle">
+                                            <button class="os-btn active" data-os="mac">🍎 Mac/Linux</button>
+                                            <button class="os-btn" data-os="win">🪟 Windows</button>
+                                        </div>
+                                    </div>
+                                    <div class="term-body" id="term-demo-3">
+                                        <div class="term-line"><span class="prompt">$</span> <span class="typing"></span><span class="cursor">_</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Part 4 Section -->
+            <section id="part4" class="content-section">
+                <h2>PHẦN 4: 4 LỖI KINH ĐIỂN & QUY TRÌNH ĐỌC LOG</h2>
+                
+                <div class="text-block">
+                    <p><strong>Analogy "Đọc kết quả xét nghiệm y tế":</strong> Khi bác sĩ đưa bạn tờ kết quả xét nghiệm dài 2 trang đầy chữ, bạn không bao giờ đọc từ đầu đến cuối. Bạn nhìn thẳng vào <strong>dòng kết luận cuối cùng</strong> trước. Đọc lỗi Terminal cũng giống hệt vậy: đừng hoảng khi thấy một 'rừng' chữ đỏ.</p>
+                </div>
+
+                <div class="text-block mt-4">
+                    <h3>Các lỗi kinh điển thường gặp</h3>
+                    <div class="table-container">
+                        <table class="info-table">
+                            <thead>
+                                <tr><th>Tên Lỗi</th><th>Nguyên nhân</th><th>Cách xử lý</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Command not found</strong></td>
+                                    <td>Gõ sai chính tả lệnh, hoặc chương trình chưa cài.</td>
+                                    <td>Gõ thật chậm, luôn dùng phím TAB để máy tính tự gõ.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>No such file or directory</strong></td>
+                                    <td>Sai tên file, đứng sai vị trí.</td>
+                                    <td>Gõ <code>pwd</code> xem đang ở đâu, gõ <code>ls</code> xem xung quanh.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Permission denied</strong></td>
+                                    <td>Không có quyền truy cập hoặc thực thi lệnh.</td>
+                                    <td>Linux/Mac: thêm <code>sudo</code>. Windows: Mở Terminal bằng Run as Administrator.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Is a directory</strong></td>
+                                    <td>Dùng lệnh dành cho File áp dụng lên Thư mục (VD: rm folder)</td>
+                                    <td>Thêm cờ đệ quy <code>-r</code> (VD: <code>rm -r folder</code>) để áp dụng cho cả thư mục và các file bên trong.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="highlight-block">
+                    <h3>Quy trình 3 bước đọc log lỗi chuẩn Developer:</h3>
+                    <ol>
+                        <li><strong>Bước 1 — Đọc từ DƯỚI LÊN (Bottom-Up):</strong> Dòng cuối cùng luôn là thông điệp trực tiếp nhất, dù log dài cả trăm dòng.</li>
+                        <li><strong>Bước 2 — Bắt từ khoá lỗi (Keyword):</strong> Tìm các chữ như <code>not found</code>, <code>denied</code>, <code>already exists</code>.</li>
+                        <li><strong>Bước 3 — Kiểm tra ngữ cảnh:</strong> Gõ <code>pwd</code> để biết mình đang ở đâu, <code>ls</code> để xem xung quanh.</li>
+                    </ol>
+                    <p style="margin-top:10px; font-style:italic;">Ví dụ thực tế: Giống như xem trễ một bộ phim ở rạp. Bước 1: Hỏi "Cảnh cuối cùng có ai chết?". Bước 2: Bắt từ khoá "Kẻ phản bội". Bước 3: Hỏi bối cảnh xung quanh để hiểu trọn vẹn mạch phim.</p>
+                </div>
+            </section>
+            
+            <footer class="page-footer">
+                <p>Xây dựng bởi Google Antigravity. Kịch Bản Bài Giảng - Sinh viên năm 1.</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
